@@ -2,7 +2,7 @@
 
 A geozip implementation for node and the browser.
 
-[http://geozipcode.blogspot.nl/2015/02/geozip.html](geozip website)
+As described here: http://geozipcode.blogspot.nl/2015/02/geozip.html
 
 ## Installation
 
