@@ -30,6 +30,14 @@ var encoded = zipper.encode(-34.783467, 128.294, true); // throws error, coordin
 var encoded = zipper.encode(-34.783467, 128.294, true, 18); // no more errors
 ```
 
+## Api
+
+#### encode(lat, lng, validate = false, precision = 18)
+returns a geohash
+
+#### decode(geozip)
+returns an object containing a "lat" and "lng" property
+
 ## License
 
 MIT

@@ -1,16 +1,14 @@
 class GeoZip {
 
-  encode(lat, lng, validate = false, precision = null) {
-    if (precision) {
-      var res = this._fixPrecision(lat, lng, precision);
-      lat = res.lat;
-      lng = res.lng;
-    }
+  encode(lat, lng, validate = false, precision = 18) {
     if (validate) this.validate(lat, lng);
     var shiftedLat = lat + 90;
     var shiftedLng = lng + 180;
-    var latParts = (shiftedLat + '').split('.');
-    var lngParts = (shiftedLng + '').split('.');
+    var res = this._fixPrecision(shiftedLat, shiftedLng, precision);
+    shiftedLat = res.lat;
+    shiftedLng = res.lng;
+    var latParts = shiftedLat.split('.');
+    var lngParts = shiftedLng.split('.');
     latParts[0] = this._zeroPad(latParts[0], 3);
     lngParts[0] = this._zeroPad(lngParts[0], 3);
     var latResult = latParts.join('');
@@ -38,15 +36,6 @@ class GeoZip {
     if (lng <= -180 || lng >= 180) {
       throw new Error('The longitude should be a number between -180 and 180.');
     }
-    var latParts = (lat + '').split('.');
-    var lngParts = (lng + '').split('.');
-    if (latParts.length !== lngParts.length) {
-      throw new Error('The latitude and longitude should both either have decimal digits or not have them.');
-    }
-    var checkIndex = (latParts.length === 1) ? 0 : 1;
-    if (latParts[checkIndex].length !== lngParts[checkIndex].length) {
-      throw new Error('The latitude and longitude should have the same amount of decimal digits');
-    }
   }
 
   _fixPrecision(lat, lng, precision) {
@@ -54,8 +43,8 @@ class GeoZip {
     var latIntegerNumbers = Math.abs(lat).toFixed().length;
     var lngIntegerNumbers = Math.abs(lng).toFixed().length;
     return {
-      lat: Number(lat.toPrecision(latIntegerNumbers + numbersAfterComma)),
-      lng: Number(lng.toPrecision(lngIntegerNumbers + numbersAfterComma))
+      lat: lat.toPrecision(latIntegerNumbers + numbersAfterComma),
+      lng: lng.toPrecision(lngIntegerNumbers + numbersAfterComma)
     };
   }
 

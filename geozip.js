@@ -17,18 +17,16 @@ var GeoZip = (function () {
     key: 'encode',
     value: function encode(lat, lng) {
       var validate = arguments[2] === undefined ? false : arguments[2];
-      var precision = arguments[3] === undefined ? null : arguments[3];
+      var precision = arguments[3] === undefined ? 18 : arguments[3];
 
-      if (precision) {
-        var res = this._fixPrecision(lat, lng, precision);
-        lat = res.lat;
-        lng = res.lng;
-      }
       if (validate) this.validate(lat, lng);
       var shiftedLat = lat + 90;
       var shiftedLng = lng + 180;
-      var latParts = (shiftedLat + '').split('.');
-      var lngParts = (shiftedLng + '').split('.');
+      var res = this._fixPrecision(shiftedLat, shiftedLng, precision);
+      shiftedLat = res.lat;
+      shiftedLng = res.lng;
+      var latParts = shiftedLat.split('.');
+      var lngParts = shiftedLng.split('.');
       latParts[0] = this._zeroPad(latParts[0], 3);
       lngParts[0] = this._zeroPad(lngParts[0], 3);
       var latResult = latParts.join('');
@@ -58,15 +56,6 @@ var GeoZip = (function () {
       if (lng <= -180 || lng >= 180) {
         throw new Error('The longitude should be a number between -180 and 180.');
       }
-      var latParts = (lat + '').split('.');
-      var lngParts = (lng + '').split('.');
-      if (latParts.length !== lngParts.length) {
-        throw new Error('The latitude and longitude should both either have decimal digits or not have them.');
-      }
-      var checkIndex = latParts.length === 1 ? 0 : 1;
-      if (latParts[checkIndex].length !== lngParts[checkIndex].length) {
-        throw new Error('The latitude and longitude should have the same amount of decimal digits');
-      }
     }
   }, {
     key: '_fixPrecision',
@@ -75,8 +64,8 @@ var GeoZip = (function () {
       var latIntegerNumbers = Math.abs(lat).toFixed().length;
       var lngIntegerNumbers = Math.abs(lng).toFixed().length;
       return {
-        lat: Number(lat.toPrecision(latIntegerNumbers + numbersAfterComma)),
-        lng: Number(lng.toPrecision(lngIntegerNumbers + numbersAfterComma))
+        lat: lat.toPrecision(latIntegerNumbers + numbersAfterComma),
+        lng: lng.toPrecision(lngIntegerNumbers + numbersAfterComma)
       };
     }
   }, {
